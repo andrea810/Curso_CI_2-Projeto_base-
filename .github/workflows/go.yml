@@ -7,37 +7,47 @@ on:
     branches: [ '*' ]
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go_version: ['1.18', '1.17', '>=1.18']
+        # Atualizado para versões modernas do Go. 
+        # Se quiser testar a versão mais recente, use '1.x'
+        go_version: ['1.22', '1.23', '1.24'] 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go_version }}
       
     - name: Build-DB
-      run: docker-compose build
+      # O comando agora é separado por espaço (Docker Compose V2)
+      run: docker compose build
       
     - name: Create-DB
-      run: docker-compose up -d
+      run: docker compose up -d
 
     - name: Test
-      run: go test -v main_test.go 
+      # Dica: Se tiver outros arquivos .go na pasta, usar apenas main_test.go pode dar erro.
+      # O ideal é testar o pacote inteiro com './...' ou '.'
+      run: go test -v ./... 
       
-  
   build:
     needs: test
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['ubuntu-latest', 'ubuntu-18.04']
+        # Removido o 18.04 que não existe mais. Adicionado o 24.04.
+        os: ['ubuntu-latest', 'ubuntu-24.04']
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      
+    - name: Set up Go # O build também precisa do Go instalado!
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.24'
+
     - name: Build
       run: go build -v main.go
