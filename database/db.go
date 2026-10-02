@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -15,16 +16,39 @@ var (
 )
 
 func ConectaComBancoDeDados() {
-	endereco := os.Getenv("DB_HOST")
-	usuario := os.Getenv("DB_USER")
-	senha := os.Getenv("DB_PASSWORD")
-	nomeBanco := os.Getenv("DB_NAME")
-	portaBanco := os.Getenv("DB_PORT")
+	// Lê as variáveis de ambiente. Se estiverem vazias, usa um valor padrão.
+	host := os.Getenv("DB_HOST")
+	if host == "" {
+		host = "localhost"
+	}
 
-	stringDeConexao := "host=localhost user=root password=root dbname=root port=5432 sslmode=disable"
-	DB, err = gorm.Open(postgres.Open(stringDeConexao))
+	user := os.Getenv("DB_USER")
+	if user == "" {
+		user = "root"
+	}
+
+	password := os.Getenv("DB_PASSWORD")
+	if password == "" {
+		password = "root"
+	}
+
+	dbname := os.Getenv("DB_NAME")
+	if dbname == "" {
+		dbname = "root"
+	}
+
+	port := os.Getenv("DB_PORT")
+	if port == "" {
+		port = "5435" // Porta exposta no seu docker-compose para a máquina host
+	}
+
+	// Monta a string de conexão dinamicamente usando as variáveis (agora elas estão sendo "usadas")
+	stringDeConexao := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		host, user, password, dbname, port)
+
+	DB, err = gorm.Open(postgres.Open(stringDeConexao), &gorm.Config{})
 	if err != nil {
-		log.Panic("Erro ao conectar com banco de dados")
+		log.Panic("Erro ao conectar com banco de dados: ", err)
 	}
 
 	DB.AutoMigrate(&models.Aluno{})
