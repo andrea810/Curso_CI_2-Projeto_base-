@@ -5,11 +5,11 @@ on:
   workflow_call:
     secrets:
       REGISTRY_USERNAME:
-        required: true
+        required: false
       REGISTRY_PASSWORD:
         required: true
       REGISTRY_URL:
-        required: true
+        required: false
 
 jobs:
   build-and-push:
