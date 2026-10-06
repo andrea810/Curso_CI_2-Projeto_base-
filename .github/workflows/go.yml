@@ -57,7 +57,5 @@ jobs:
     needs: build
     uses: ./.github/workflows/Docker.yml
     secrets:
-      # Passando os secrets para o workflow reutilizável (Docker.yml)
-      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-      REGISTRY_PASSWORD: ${{ secrets.PASSWORD_DOCKER_HUB }}
-      REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
+      inherit
+   
