@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go_version: ['1.22', '1.23'] # Versões mais atuais e estáveis
+        go_version: ['1.22', '1.23'] 
     steps:
     - uses: actions/checkout@v4
 
@@ -27,17 +27,16 @@ jobs:
       run: docker compose up -d
 
     - name: Wait for DB to be ready
-      # Opcional, mas recomendado: dá um tempo para o Postgres inicializar antes de rodar o teste
       run: sleep 5 
 
     - name: Test
       run: go test -v ./...
-      env: # <--- ADICIONE ESTE BLOCO 'env'
+      env: 
         DB_HOST: localhost
         DB_USER: root
         DB_PASSWORD: root
         DB_NAME: root
-        DB_PORT: "5435" # Porta que o docker-compose expõe para o host
+        DB_PORT: "5435" 
       
   build:
     needs: test
@@ -53,11 +52,12 @@ jobs:
     - name: Build
       run: go build -v main.go
 
-    docker:
-        needs: build
-        uses: ./.github/workflows/Docker.yml
-
-   
-   
-
-      
+  # ✅ CORREÇÃO AQUI: 'docker' está alinhado com 'test' e 'build'
+  docker:
+    needs: build
+    uses: ./.github/workflows/Docker.yml
+    secrets:
+      # Passando os secrets para o workflow reutilizável (Docker.yml)
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
