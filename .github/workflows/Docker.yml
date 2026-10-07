@@ -23,10 +23,21 @@ jobs:
         registry: ${{ secrets.REGISTRY_URL }}
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.PASSWORD_DOCKER_HUB }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
+         
+    - name: Build and push Docker images
+  # You may pin to the exact commit or the version.
+  # uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+      uses: docker/build-push-action@v7.4.0
       with:
+    # Builder instance
         context: .
+    # Path to the Dockerfile
+        file: ./Dockerfile
+    # Push is a shorthand for --output=type=registry
         push: true
-        tags: ${{ secrets.REGISTRY_URL }}/sua-app:latest,${{ secrets.REGISTRY_URL }}/sua-app:${{ github.sha }}
+    # List of tags
+        tags: andrea810/go_ci:${{ github.ref_name }}
+    # Sets the target stage to build
+      
+    # GitHub Token used to authenticate against a repository for Git context
+        github-token: # optional, default is ${{ github.token }}
